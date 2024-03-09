@@ -1,5 +1,7 @@
 package main
 
+import "fmt"
+
 type Bio struct {
 	name, Address, Hobby string
 }
@@ -7,6 +9,11 @@ type Bio struct {
 // Contoh function dengan parameter pointer
 func ChangeAddressToIndonesia(address *Bio) {
 	address.Address = "Indonesia"
+}
+
+// Contoh pointer pada method struct
+func (bio *Bio) changeNameToYp() {
+	bio.name = "Yp"
 }
 
 func main() {
@@ -49,4 +56,10 @@ func main() {
 	// ChangeAddressToIndonesia(&user1)
 	// fmt.Println(user1)
 
+
+	// Mencoba method struct dengan parameter pointer
+	user1 := Bio{name: "Lontong"}
+	user1.changeNameToYp()
+
+	fmt.Println(user1)
 }
