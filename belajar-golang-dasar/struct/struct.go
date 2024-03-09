@@ -2,14 +2,21 @@ package main
 
 import "fmt"
 
+// Cara membuat struct
+// cara 1
+type User struct {
+	Name, Addres string
+	age          int
+}
+
+func (user User) getUser(){
+	fmt.Println("ini method getuser adalah:", user.Name)
+}
+
+
 func main() {
 
-	// Cara membuat struct
-	// cara 1
-	type User struct {
-		Name, Addres string
-		age          int
-	}
+
 	var yp User
 	yp.Name = "Farhan"
 	yp.Addres = "Jauh"
@@ -28,4 +35,7 @@ func main() {
 	fmt.Println(yp)
 	fmt.Println(farhan)
 	fmt.Println(farhanyp)
+
+	farhanyp.getUser()
+
 }
