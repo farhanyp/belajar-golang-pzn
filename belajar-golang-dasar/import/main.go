@@ -6,6 +6,7 @@ import (
 )
 
 func main() {
-	fmt.Println("ini Main")
 	function.Hello()
+
+	fmt.Println(function.Application)
 }
