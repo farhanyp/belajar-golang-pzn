@@ -1,4 +1,4 @@
-module table-test
+module mock-test
 
 go 1.22.0
 
