@@ -12,7 +12,7 @@ var file []byte
 
 func TestEmbed(t *testing.T){
 
-	err := ioutil.WriteFile("halal_next", file, fs.ModePerm)
+	err := ioutil.WriteFile("halal_next.jpeg", file, fs.ModePerm)
 	if err != nil {
 		panic(err)
 	}
