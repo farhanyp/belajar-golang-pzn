@@ -15,44 +15,63 @@ func NewCategoryRepositoryImpl() CategoryRepository{
 	return &categoryRepositoryImpl{}
 }
 
-func (repository *categoryRepositoryImpl) Save(ctx context.Context, tx *sql.Tx, category domain.Category) domain.Category{
+func (repository *categoryRepositoryImpl) Save(ctx context.Context, db *sql.DB, category domain.Category) domain.Category{
 	
 	SQL := "INSERT INTO category (name) VALUES (?)"
-	result, err := tx.ExecContext(ctx, SQL, category.Name)
-	if err != nil {
-		panic(err)
-	}
+
+	tx, err := db.Begin()
+	helper.IfError(err)
+
+	result, err := db.ExecContext(ctx, SQL, category.Name)
+	helper.TxRollback(err, tx)
 
 	id, err := result.LastInsertId()
-	if err != nil {
-		panic(err)
-	}
+	helper.IfError(err)
+	helper.TxRollback(err, tx)
+
+	err = tx.Commit()
+	helper.TxRollback(err, tx)
 
 	category.Id = int(id)
 
 	return category
 }
 
-func (repository *categoryRepositoryImpl) Update(ctx context.Context, tx *sql.Tx, category domain.Category) domain.Category{
-	
+func (repository *categoryRepositoryImpl) Update(ctx context.Context, db *sql.DB, category domain.Category) domain.Category{
+
 	SQL := "UPDATE category SET name = (?) WHERE id = (?)"
-	_, err := tx.ExecContext(ctx, SQL, category.Name, category.Id)
+
+	tx, err := db.Begin()
 	helper.IfError(err)
+
+	_, err = tx.ExecContext(ctx, SQL, category.Name, category.Id)
+	helper.TxRollback(err, tx)
+
+	err = tx.Commit()
+	helper.TxRollback(err, tx)
 
 	return category
 }
 
-func (repository *categoryRepositoryImpl)Delete(ctx context.Context, tx *sql.Tx, categoryId int){
+func (repository *categoryRepositoryImpl)Delete(ctx context.Context, db *sql.DB, categoryId int){
 
 	SQL := "DELETE FROM category WHERE id = (?)"
-	_, err := tx.QueryContext(ctx, SQL, categoryId)
+
+	tx, err := db.Begin()
 	helper.IfError(err)
+	
+	_, err = tx.QueryContext(ctx, SQL, categoryId)
+	helper.IfError(err)
+
+	err = tx.Commit()
+	helper.TxRollback(err, tx)
 }
 
-func (repository *categoryRepositoryImpl)FindById(ctx context.Context, tx *sql.Tx, categoryId int) (domain.Category, error){
+func (repository *categoryRepositoryImpl)FindById(ctx context.Context, db *sql.DB, categoryId int) (domain.Category, error){
 
 	SQL := "SELECT * FROM category WHERE id = (?)"
-	rows, err := tx.QueryContext(ctx, SQL, categoryId)
+	
+	rows, err := db.QueryContext(ctx, SQL, categoryId)
 	helper.IfError(err)
 	defer rows.Close()
 
@@ -67,10 +86,10 @@ func (repository *categoryRepositoryImpl)FindById(ctx context.Context, tx *sql.T
 	}
 }
 
-func (repository *categoryRepositoryImpl)FindAll(ctx context.Context, tx *sql.Tx) []domain.Category{
+func (repository *categoryRepositoryImpl)FindAll(ctx context.Context, db *sql.DB) []domain.Category{
 
-	SQL := "SELECT * FROM category"
-	rows, err := tx.QueryContext(ctx, SQL)
+	SQL := "select id, name from category"
+	rows, err := db.QueryContext(ctx, SQL)
 	helper.IfError(err)
 	defer rows.Close()
 

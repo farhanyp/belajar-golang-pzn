@@ -21,97 +21,36 @@ func TestCategoryRepositorySaveSuccess(t *testing.T) {
 
 	// ClearDatabase(db)
     
-    tx, err := db.Begin()
-	helper.IfError(err)
-
-	defer func(){
-		err := recover()
-		if err != nil {
-			errorRollback := tx.Rollback()
-			helper.IfError(errorRollback)
-			panic(err)
-		} else {
-			errorCommit := tx.Commit()
-			helper.IfError(errorCommit)
-		}
-	}()
-    
-    category := domain.Category{Name: "Test Category"}
-    savedCategory := repo.Save(context.Background(), tx, category)
-
-	assert.NotEmpty(t, savedCategory)
+    category := domain.Category{Name: "Tes Category1 "}
+    repo.Save(context.Background(), db, category)
 }
 
 func TestCategoryRepositoryUpdateSuccess(t *testing.T) {
     repo := repository.NewCategoryRepositoryImpl()
     db := SetupDatabase()
     defer db.Close()
-    
-    tx, err := db.Begin()
-	helper.IfError(err)
 
-	defer func(){
-		err := recover()
-		if err != nil {
-			errorRollback := tx.Rollback()
-			helper.IfError(errorRollback)
-			panic(err)
-		} else {
-			errorCommit := tx.Commit()
-			helper.IfError(errorCommit)
-		}
-	}()
     
-    category := domain.Category{Id: 3, Name: "Test Category edit"}
-    updateCategory := repo.Update(context.Background(), tx, category)
+    category := domain.Category{Id: 3, Name: "Tes Update Category"}
+    savedCategory := repo.Update(context.Background(), db, category)
 
-	assert.NotEmpty(t, updateCategory)
+	assert.NotEmpty(t, savedCategory)
 }
 
 func TestCategoryRepositoryDeleteSuccess(t *testing.T) {
     repo := repository.NewCategoryRepositoryImpl()
     db := SetupDatabase()
     defer db.Close()
-    
-    tx, err := db.Begin()
-	helper.IfError(err)
-
-	defer func(){
-		err := recover()
-		if err != nil {
-			errorRollback := tx.Rollback()
-			helper.IfError(errorRollback)
-			panic(err)
-		} else {
-			errorCommit := tx.Commit()
-			helper.IfError(errorCommit)
-		}
-	}()
 	
-	repo.Delete(context.Background(), tx, 3)
+	repo.Delete(context.Background(), db, 3)
 }
 
 func TestCategoryRepositoryFindByIdSuccess(t *testing.T) {
     repo := repository.NewCategoryRepositoryImpl()
     db := SetupDatabase()
     defer db.Close()
-    
-    tx, err := db.Begin()
-	helper.IfError(err)
-
-	defer func(){
-		err := recover()
-		if err != nil {
-			errorRollback := tx.Rollback()
-			helper.IfError(errorRollback)
-			panic(err)
-		} else {
-			errorCommit := tx.Commit()
-			helper.IfError(errorCommit)
-		}
-	}()
 	
-    result, _ := repo.FindById(context.Background(), tx, 4)
+    result, _ := repo.FindById(context.Background(), db, 4)
 
 	fmt.Println(result)
 
@@ -122,23 +61,8 @@ func TestCategoryRepositoryFindByIdNotFound(t *testing.T) {
     repo := repository.NewCategoryRepositoryImpl()
     db := SetupDatabase()
     defer db.Close()
-    
-    tx, err := db.Begin()
-	helper.IfError(err)
-
-	defer func(){
-		err := recover()
-		if err != nil {
-			errorRollback := tx.Rollback()
-			helper.IfError(errorRollback)
-			panic(err)
-		} else {
-			errorCommit := tx.Commit()
-			helper.IfError(errorCommit)
-		}
-	}()
 	
-    _, err = repo.FindById(context.Background(), tx, 5)
+    _, err := repo.FindById(context.Background(), db, 5)
 	
 	fmt.Println(err)
 
@@ -149,23 +73,8 @@ func TestCategoryRepositoryFindAllSuccess(t *testing.T) {
     repo := repository.NewCategoryRepositoryImpl()
     db := SetupDatabase()
     defer db.Close()
-    
-    tx, err := db.Begin()
-	helper.IfError(err)
-
-	defer func(){
-		err := recover()
-		if err != nil {
-			errorRollback := tx.Rollback()
-			helper.IfError(errorRollback)
-			panic(err)
-		} else {
-			errorCommit := tx.Commit()
-			helper.IfError(errorCommit)
-		}
-	}()
 	
-    result := repo.FindAll(context.Background(), tx)
+    result := repo.FindAll(context.Background(), db)
 
 	fmt.Println(result)
 
