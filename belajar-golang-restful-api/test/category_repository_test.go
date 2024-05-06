@@ -2,7 +2,7 @@ package test
 
 import (
 	"belajar-golang-restful-api/helper"
-	"belajar-golang-restful-api/model/domain"
+	"belajar-golang-restful-api/model/web"
 	"belajar-golang-restful-api/repository"
 	"context"
 	"database/sql"
@@ -21,7 +21,7 @@ func TestCategoryRepositorySaveSuccess(t *testing.T) {
 
 	// ClearDatabase(db)
     
-    category := domain.Category{Name: "Tes Category1 "}
+    category := web.CategoryCreateRequest{Name: "Tes Category1 "}
     repo.Save(context.Background(), db, category)
 }
 
@@ -31,7 +31,7 @@ func TestCategoryRepositoryUpdateSuccess(t *testing.T) {
     defer db.Close()
 
     
-    category := domain.Category{Id: 3, Name: "Tes Update Category"}
+    category := web.CategoryUpdateRequest{Id: 3, Name: "Tes Update Category"}
     savedCategory := repo.Update(context.Background(), db, category)
 
 	assert.NotEmpty(t, savedCategory)

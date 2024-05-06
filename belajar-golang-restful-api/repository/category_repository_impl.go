@@ -2,7 +2,7 @@ package repository
 
 import (
 	"belajar-golang-restful-api/helper"
-	"belajar-golang-restful-api/model/domain"
+	"belajar-golang-restful-api/model/web"
 	"context"
 	"database/sql"
 	"errors"
@@ -15,7 +15,7 @@ func NewCategoryRepositoryImpl() CategoryRepository{
 	return &categoryRepositoryImpl{}
 }
 
-func (repository *categoryRepositoryImpl) Save(ctx context.Context, db *sql.DB, category domain.Category) domain.Category{
+func (repository *categoryRepositoryImpl) Save(ctx context.Context, db *sql.DB, category web.CategoryCreateRequest) web.CategoryResponse{
 	
 	SQL := "INSERT INTO category (name) VALUES (?)"
 
@@ -32,12 +32,15 @@ func (repository *categoryRepositoryImpl) Save(ctx context.Context, db *sql.DB, 
 	err = tx.Commit()
 	helper.TxRollback(err, tx)
 
-	category.Id = int(id)
+	categoryResponse := web.CategoryResponse{
+		Id: int(id),
+		Name: category.Name,
+	}
 
-	return category
+	return categoryResponse
 }
 
-func (repository *categoryRepositoryImpl) Update(ctx context.Context, db *sql.DB, category domain.Category) domain.Category{
+func (repository *categoryRepositoryImpl) Update(ctx context.Context, db *sql.DB, category web.CategoryUpdateRequest) web.CategoryResponse{
 
 	SQL := "UPDATE category SET name = (?) WHERE id = (?)"
 
@@ -50,7 +53,12 @@ func (repository *categoryRepositoryImpl) Update(ctx context.Context, db *sql.DB
 	err = tx.Commit()
 	helper.TxRollback(err, tx)
 
-	return category
+	categoryResponse := web.CategoryResponse{
+		Id: category.Id,
+		Name: category.Name,
+	}
+
+	return categoryResponse
 }
 
 func (repository *categoryRepositoryImpl)Delete(ctx context.Context, db *sql.DB, categoryId int){
@@ -67,7 +75,7 @@ func (repository *categoryRepositoryImpl)Delete(ctx context.Context, db *sql.DB,
 	helper.TxRollback(err, tx)
 }
 
-func (repository *categoryRepositoryImpl)FindById(ctx context.Context, db *sql.DB, categoryId int) (domain.Category, error){
+func (repository *categoryRepositoryImpl)FindById(ctx context.Context, db *sql.DB, categoryId int) (web.CategoryResponse, error){
 
 	SQL := "SELECT * FROM category WHERE id = (?)"
 	
@@ -75,7 +83,7 @@ func (repository *categoryRepositoryImpl)FindById(ctx context.Context, db *sql.D
 	helper.IfError(err)
 	defer rows.Close()
 
-	category := domain.Category{}
+	category := web.CategoryResponse{}
 	if rows.Next(){
 		err := rows.Scan(&category.Id, &category.Name)
 		helper.IfError(err)
@@ -86,16 +94,16 @@ func (repository *categoryRepositoryImpl)FindById(ctx context.Context, db *sql.D
 	}
 }
 
-func (repository *categoryRepositoryImpl)FindAll(ctx context.Context, db *sql.DB) []domain.Category{
+func (repository *categoryRepositoryImpl)FindAll(ctx context.Context, db *sql.DB) []web.CategoryResponse{
 
 	SQL := "select id, name from category"
 	rows, err := db.QueryContext(ctx, SQL)
 	helper.IfError(err)
 	defer rows.Close()
 
-	var categories []domain.Category
+	var categories []web.CategoryResponse
 	for rows.Next(){
-		category := domain.Category{}
+		category := web.CategoryResponse{}
 		err := rows.Scan(&category.Id, &category.Name)
 		helper.IfError(err)
 
