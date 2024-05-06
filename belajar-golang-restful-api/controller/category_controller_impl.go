@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"belajar-golang-restful-api/exception"
 	"belajar-golang-restful-api/helper"
 	"belajar-golang-restful-api/model/web"
 	"belajar-golang-restful-api/repository"
@@ -78,7 +79,12 @@ func(repo *CategoryControllerImpl) Delete(writer http.ResponseWriter, request *h
 	id, err := strconv.Atoi(categoryId)
 	helper.IfError(err)
 
-	repo.CategoryRepository.Delete(request.Context(), repo.DB, id)
+	category, err := repo.CategoryRepository.FindById(request.Context(), repo.DB, id)
+	if err != nil{
+		panic(exception.NewNotFoundError(err.Error()))
+	}
+
+	repo.CategoryRepository.Delete(request.Context(), repo.DB, category.Id)
 
 	webResponse := web.WebResponse{
 		Code: 200,
@@ -95,7 +101,9 @@ func(repo *CategoryControllerImpl) FindById(writer http.ResponseWriter, request 
 	helper.IfError(err)
 
 	category, err := repo.CategoryRepository.FindById(request.Context(), repo.DB, id)
-	helper.IfError(err)
+	if err != nil{
+		panic(exception.NewNotFoundError(err.Error()))
+	}
 
 	webResponse := web.WebResponse{
 		Code: 200,
