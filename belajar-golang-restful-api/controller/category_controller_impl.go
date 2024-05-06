@@ -32,6 +32,8 @@ func(repo *CategoryControllerImpl) Create(writer http.ResponseWriter, request *h
 
 	helper.ReadFromRequestBody(request, &categoryCreateRequest)
 
+	err := repo.Validate.Struct(categoryCreateRequest)
+	helper.IfError(err)
 
 	categoryResponse := repo.CategoryRepository.Save(request.Context(), repo.DB, categoryCreateRequest)
 
@@ -55,6 +57,9 @@ func(repo *CategoryControllerImpl) Update(writer http.ResponseWriter, request *h
 	CategoryUpdateRequest.Id = id
 
 	helper.ReadFromRequestBody(request, &CategoryUpdateRequest)
+
+	err = repo.Validate.Struct(CategoryUpdateRequest)
+	helper.IfError(err)
 
 	categoryResponse := repo.CategoryRepository.Update(request.Context(), repo.DB, CategoryUpdateRequest)
 
