@@ -1,18 +1,18 @@
 package provider
 
-type simpleRepository struct {
+type SimpleRepository struct {
 }
 
-func NewSimpleRepository() *simpleRepository {
-	return &simpleRepository{}
+func NewSimpleRepository() *SimpleRepository {
+	return &SimpleRepository{}
 }
 
-type simpleService struct {
-	*simpleRepository
+type SimpleService struct {
+	*SimpleRepository
 }
 
-func NewSimpleService(repo *simpleRepository) *simpleService {
-	return &simpleService{
-		simpleRepository: repo,
+func NewSimpleService(repo *SimpleRepository) *SimpleService {
+	return &SimpleService{
+		SimpleRepository: repo,
 	}
 }
