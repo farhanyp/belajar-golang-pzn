@@ -1,0 +1,4 @@
+time="2024-06-07T17:30:10+07:00" level=trace msg="ini Trace"
+time="2024-06-07T17:30:10+07:00" level=debug msg="ini Debug"
+time="2024-06-07T17:30:10+07:00" level=info msg="ini Info"
+time="2024-06-07T17:30:10+07:00" level=warning msg="ini Warn"
