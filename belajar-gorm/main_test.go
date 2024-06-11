@@ -122,3 +122,87 @@ func TestCreateBatchUser(t *testing.T){
 	assert.Equal(t, int64(9), response.RowsAffected)
 
 }
+
+func TestTransactionRollback(t *testing.T){
+
+	err :=DB.Transaction(func(tx *gorm.DB) error {
+		err := tx.Create(
+			&User{
+				ID: "11", 
+				Password: "rahasia", 
+				Name: Name{ 
+					FirstName: "farhan", 
+					MiddleName: "yudha", 
+					LastName: "pratama",
+					},
+				},
+			).Error
+
+		if err != nil {
+			return err
+		}
+
+		err = tx.Create(
+			&User{
+				ID: "12", 
+				Password: "rahasia", 
+				Name: Name{ 
+					FirstName: "farhan", 
+					MiddleName: "yudha", 
+					LastName: "pratama",
+					},
+				},
+			).Error
+
+		if err != nil {
+			return err
+		}
+
+		return nil
+	})
+
+	assert.Nil(t, err)
+
+}
+
+func TestTransactionRollbackWithError(t *testing.T){
+
+	err :=DB.Transaction(func(tx *gorm.DB) error {
+		err := tx.Create(
+			&User{
+				ID: "13", 
+				Password: "rahasia", 
+				Name: Name{ 
+					FirstName: "farhan", 
+					MiddleName: "yudha", 
+					LastName: "pratama",
+					},
+				},
+			).Error
+
+		if err != nil {
+			return err
+		}
+
+		err = tx.Create(
+			&User{
+				ID: "11", 
+				Password: "rahasia", 
+				Name: Name{ 
+					FirstName: "farhan", 
+					MiddleName: "yudha", 
+					LastName: "pratama",
+					},
+				},
+			).Error
+
+		if err != nil {
+			return err
+		}
+
+		return nil
+	})
+
+	assert.NotNil(t, err)
+
+}
