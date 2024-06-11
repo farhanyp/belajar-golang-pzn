@@ -9,6 +9,7 @@ import (
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 	"gorm.io/gorm/logger"
 )
 
@@ -414,5 +415,21 @@ func TestUnscoped(t *testing.T) {
 
 	var todos []Todo
 	err = DB.Unscoped().Find(&todos).Error
+	assert.Nil(t, err)
+}
+
+func TestLock(t *testing.T) {
+	err := DB.Transaction(func(tx *gorm.DB) error {
+		var user User
+		err := tx.Clauses(clause.Locking{Strength: "UPDATE"}).Take(&user, "id = ?", "1").Error
+		if err != nil {
+			return err
+		}
+
+		user.Name.FirstName = "Joko"
+		user.Name.LastName = "Morro"
+		err = tx.Save(&user).Error
+		return err
+	})
 	assert.Nil(t, err)
 }
