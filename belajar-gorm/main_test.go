@@ -366,3 +366,20 @@ func TestAutoIncrement(t *testing.T){
 		
 	}
 }
+
+func TestDelete(t *testing.T){
+
+	var user User
+	err := DB.Take(&user, "id = $1", "12").Error
+	assert.Nil(t, err)
+
+	err = DB.Delete(&user).Error
+	assert.Nil(t, err)
+
+	err = DB.Delete(&user, "id = $1", "11").Error
+	assert.Nil(t, err)
+
+	err = DB.Where("id = $1", "10").Delete(&user).Error
+	assert.Nil(t, err)
+
+}
