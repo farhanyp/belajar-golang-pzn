@@ -1,18 +1,22 @@
 package main
 
 import (
+	"strconv"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
 func DBConnection() *gorm.DB{
 
 	dsn := "host=localhost user=postgres password=12345678 dbname=belajar_gorm port=5432 sslmode=disable TimeZone=Asia/Shanghai"
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
+		Logger: logger.Default.LogMode(logger.Info),
+	})
 
 	if err != nil {
 		panic(err)
@@ -76,5 +80,45 @@ func TestScanRow(t *testing.T){
 
 	}
 	assert.Equal(t, 3, len(samples))
+
+}
+
+func TestCreateUser(t *testing.T){
+
+	user := User{
+		ID: "1",
+		Password: "rahasia",
+		Name: Name{
+			FirstName: "farhan",
+			MiddleName: "yudha",
+			LastName: "pratama",
+		},
+	}
+
+	response := DB.Create(&user)
+	assert.Nil(t, response.Error)
+	assert.Equal(t, int64(1), response.RowsAffected)
+
+}
+
+func TestCreateBatchUser(t *testing.T){
+	var users []User
+
+	for i := 2; i <= 10; i++ {
+		users = append(users, User{
+			ID: strconv.Itoa(i),
+			Name: Name{
+				FirstName: "farhan" + strconv.Itoa(i),
+				MiddleName: "yudha" + strconv.Itoa(i),
+				LastName: "pratama" + strconv.Itoa(i),
+			},
+		})
+	}
+
+
+
+	response := DB.Create(&users)
+	assert.Nil(t, response.Error)
+	assert.Equal(t, int64(9), response.RowsAffected)
 
 }
