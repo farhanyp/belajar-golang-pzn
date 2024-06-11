@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"strconv"
 	"testing"
 
@@ -348,4 +349,20 @@ func TestUpdateSelectedColumns(t *testing.T) {
 		},
 	}).Error
 	assert.Nil(t, err)
+}
+
+func TestAutoIncrement(t *testing.T){
+	for i := 0; i < 10; i++ {
+		userLog := UserLog{
+			UserId: "1",
+			Action: "Test Action",
+		}
+
+		err := DB.Create(&userLog).Error
+		assert.Nil(t, err)
+
+		assert.NotEqual(t, 0, userLog.ID)
+		fmt.Println(userLog.ID)
+		
+	}
 }
