@@ -20,6 +20,7 @@ type User struct {
 	Name      Name 		`gorm:"embedded"`
 	CreatedAt time.Time	`gorm:"column:created_at;autoCreateTime"`
 	UpdatedAt time.Time	`gorm:"column:updated_at;autoCreateTime;autoUpdateTime"`
+	Wallet		Wallet	`gorm:"foreignKey:user_id;references:id"`
 }
 
 // membuat nama table manual
