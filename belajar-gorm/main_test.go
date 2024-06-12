@@ -462,3 +462,44 @@ func TestRetrieveRelationJoin(t *testing.T) {
 	assert.Equal(t, "1", user.ID)
 	assert.Equal(t, "1", user.Wallet.ID)
 }
+
+func TestUserAndAddresses(t *testing.T) {
+	user := User{
+		ID:       "2",
+		Password: "rahasia",
+		Name: Name{
+			FirstName: "User 50",
+		},
+		Wallet: Wallet{
+			ID:      "2",
+			UserId:  "2",
+			Balance: 1000000,
+		},
+		Addresses: []Address{
+			{
+				UserId:  "2",
+				Address: "Jalan A",
+			},
+			{
+				UserId:  "2",
+				Address: "Jalan B",
+			},
+		},
+	}
+
+	err := DB.Save(&user).Error
+	assert.Nil(t, err)
+}
+
+func TestPreloadJoinOneToMany(t *testing.T) {
+	var users []User
+	err := DB.Model(&User{}).Preload("Addresses").Joins("Wallet").Find(&users).Error
+	assert.Nil(t, err)
+}
+
+func TestTakePreloadJoinOneToMany(t *testing.T) {
+	var user User
+	err := DB.Model(&User{}).Preload("Addresses").Joins("Wallet").
+		Take(&user, "users.id = ?", "2").Error
+	assert.Nil(t, err)
+}

@@ -1,0 +1,17 @@
+package main
+
+import (
+	"time"
+)
+
+type Address struct{
+	ID			int					`gorm:"primary_key;column:id"`
+	UserId  	string 				`gorm:"column:user_id"`
+	Address		string				`gorm:"column:address"`
+	CreatedAt 	time.Time			`gorm:"column:created_at;autoCreateTime"`
+	UpdatedAt 	time.Time			`gorm:"column:updated_at;autoCreateTime;autoUpdateTime"`
+}
+
+func (u *Address)	TableName() string{
+	return "addresses"
+}
