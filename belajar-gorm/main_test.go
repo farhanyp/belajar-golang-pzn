@@ -19,6 +19,8 @@ func DBConnection() *gorm.DB{
 	dsn := "host=localhost user=postgres password=12345678 dbname=belajar_gorm port=5432 sslmode=disable TimeZone=Asia/Shanghai"
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
 		Logger: logger.Default.LogMode(logger.Info),
+		SkipDefaultTransaction: false,
+		PrepareStmt: false,
 	})
 
 	if err != nil {
