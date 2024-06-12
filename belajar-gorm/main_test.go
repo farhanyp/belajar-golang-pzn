@@ -629,3 +629,46 @@ func TestAssociationClear(t *testing.T) {
 	err = DB.Model(&product).Association("LikedByUsers").Clear()
 	assert.Nil(t, err)
 }
+
+func TestPreloadingWithCondition(t *testing.T) {
+	var user User
+	err := DB.Preload("Wallet", "balance > ?", 100).Take(&user, "id = ?", "1").Error
+	assert.Nil(t, err)
+
+	fmt.Println(user)
+}
+
+func TestPreloadingNested(t *testing.T) {
+	var wallet Wallet
+	err := DB.Preload("User.Addresses").Take(&wallet, "id = ?", "2").Error
+	assert.Nil(t, err)
+
+	fmt.Println(wallet)
+	fmt.Println(wallet.User)
+	fmt.Println(wallet.User.Addresses)
+}
+
+func TestPreloadingAll(t *testing.T) {
+	var user User
+	err := DB.Preload(clause.Associations).Take(&user, "id = ?", "1").Error
+	assert.Nil(t, err)
+}
+
+func TestJoinQuery(t *testing.T) {
+	var users []User
+	err := DB.Joins("join wallets on wallets.user_id = users.id").Find(&users).Error
+	assert.Nil(t, err)
+	assert.Equal(t, 2, len(users))
+
+	users = []User{}
+	err = DB.Joins("Wallet").Find(&users).Error // left join
+	assert.Nil(t, err)
+	assert.Equal(t, 11, len(users))
+}
+
+func TestJoinWithCondition(t *testing.T) {
+	var users []User
+	err := DB.Joins("join wallets on wallets.user_id = users.id AND wallets.balance > ?", 500000).Find(&users).Error
+	assert.Nil(t, err)
+	assert.Equal(t, 2, len(users))
+}
