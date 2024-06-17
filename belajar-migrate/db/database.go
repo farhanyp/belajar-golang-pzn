@@ -19,6 +19,8 @@ func GetConnection() *sql.DB {
 
 	return db
 
+	// go install -tags ‘postgres’ github.com/golang-migrate/migrate/v4/cmd/migrate@latest
+
 	// Untuk migrate
 	// migrate create -ext sql -dir db/migrations create_table_category
 
